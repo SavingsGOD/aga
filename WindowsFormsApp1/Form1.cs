@@ -18,21 +18,6 @@ namespace WindowsFormsApp3
         {
             InitializeComponent();
         }
-        private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (!IsValidLoginCharacter(e.KeyChar) && !char.IsControl(e.KeyChar))
-            {
-                e.Handled = true;
-            }
-        }
-
-        private void textBox2_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (!IsValidPassCharacter(e.KeyChar) && !char.IsControl(e.KeyChar))
-            {
-                e.Handled = true;
-            }
-        }
 
         private bool IsValidLoginCharacter(char c)
         {
@@ -66,6 +51,96 @@ namespace WindowsFormsApp3
 
         private void pictureBox2_MouseClick(object sender, MouseEventArgs e)
         {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+
+
+        private void button2_Click_1(object sender, EventArgs e)
+        {
+            string login = textBox1.Text;
+            string password = textBox2.Text;
+
+            // Проверка на пустые поля
+            if (string.IsNullOrWhiteSpace(login) || string.IsNullOrWhiteSpace(password))
+            {
+                MessageBox.Show("Пожалуйста, заполните все поля.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Проверка логина и пароля
+            if (login == "user" && password == "user")
+            {
+                MessageBox.Show("Авторизация успешна!", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Welcome welcome = new Welcome();
+                this.Visible = false;
+                welcome.ShowDialog();
+                this.Close();
+                // Здесь можно добавить логику для перехода на другую форму или выполнения другой действия
+            }
+            else
+                MessageBox.Show("Неверный пароль", "Ошибка авторизации", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            textBox2.Text = "";
+            Captha();
+        }
+        private void Captha()
+        {
+            CaptchaToImage();
+            pictureBox3.Enabled = false;
+            textBox1.Text = null;
+            textBox2.Text = null;
+            pictureBox3.Visible = true;
+            this.Height = 539;
+        }
+        private void CaptchaToImage()
+        {
+            Random random = new Random();
+            string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            captchaText = "";
+
+            // Генерация текста CAPTCHA
+            for (int i = 0; i < 4; i++)
+            {
+                captchaText += chars[random.Next(chars.Length)];
+            }
+
+            Bitmap bmp = new Bitmap(pictureBox3.Width, pictureBox3.Height);
+            Graphics graphics = Graphics.FromImage(bmp);
+            graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            graphics.Clear(Color.White);
+            Font font = new Font("Comic Sans MS", 30, FontStyle.Bold);
+
+            // Увеличение расстояния между символами
+            for (int i = 0; i < 4; i++)
+            {
+                PointF point = new PointF(i * 50, 0); // Увеличьте множитель для большего расстояния
+                graphics.TranslateTransform(10, 10);
+                graphics.RotateTransform(random.Next(-10, 10));
+                graphics.DrawString(captchaText[i].ToString(), font, Brushes.Black, point);
+                graphics.ResetTransform();
+            }
+
+            // Рисование линий
+            for (int i = 0; i < 10; i++)
+            {
+                Pen pen = new Pen(Color.Red, random.Next(2, 5));
+                int x1 = random.Next(pictureBox3.Width);
+                int y1 = random.Next(pictureBox3.Height);
+                int x2 = random.Next(pictureBox3.Width);
+                int y2 = random.Next(pictureBox3.Height);
+                graphics.DrawLine(pen, x1, y1, x2, y2);
+            }
+
+            pictureBox3.Image = bmp;
+        }
+
+        private void pictureBox2_MouseClick_1(object sender, MouseEventArgs e)
+        {
             if (m1 == 0)
             {
                 textBox2.PasswordChar = default;
@@ -80,89 +155,25 @@ namespace WindowsFormsApp3
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void textBox1_KeyPress_1(object sender, KeyPressEventArgs e)
+        {
+            if (!IsValidLoginCharacter(e.KeyChar) && !char.IsControl(e.KeyChar))
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void textBox2_KeyPress_1(object sender, KeyPressEventArgs e)
+        {
+            if (!IsValidPassCharacter(e.KeyChar) && !char.IsControl(e.KeyChar))
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void button1_Click_1(object sender, EventArgs e)
         {
             Application.Exit();
         }
-
-       
-
-        private void button2_Click_1(object sender, EventArgs e)
-        {
-                string login = textBox1.Text;
-                string password = textBox2.Text;
-
-                // Проверка на пустые поля
-                if (string.IsNullOrWhiteSpace(login) || string.IsNullOrWhiteSpace(password))
-                {
-                    MessageBox.Show("Пожалуйста, заполните все поля.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-
-                // Проверка логина и пароля
-                if (login == "user" && password == "user")
-                {
-                    MessageBox.Show("Авторизация успешна!", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    Welcome welcome = new Welcome();
-                    this.Visible = false;
-                    welcome.ShowDialog();
-                    this.Close();
-                    // Здесь можно добавить логику для перехода на другую форму или выполнения другой действия
-                }
-                else
-                    MessageBox.Show("Неверный пароль", "Ошибка авторизации", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                textBox2.Text = "";
-                Captha();
-            }
-            private void Captha()
-            {
-                CaptchaToImage();
-                pictureBox3.Enabled = false;
-                textBox1.Text = null;
-                textBox2.Text = null;
-                pictureBox3.Visible = true;
-                this.Height = 539;
-            }
-            private void CaptchaToImage()
-            {
-                Random random = new Random();
-                string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-                captchaText = "";
-
-                // Генерация текста CAPTCHA
-                for (int i = 0; i < 4; i++)
-                {
-                    captchaText += chars[random.Next(chars.Length)];
-                }
-
-                Bitmap bmp = new Bitmap(pictureBox3.Width, pictureBox3.Height);
-                Graphics graphics = Graphics.FromImage(bmp);
-                graphics.SmoothingMode = SmoothingMode.AntiAlias;
-                graphics.Clear(Color.White);
-                Font font = new Font("Comic Sans MS", 30, FontStyle.Bold);
-
-                // Увеличение расстояния между символами
-                for (int i = 0; i < 4; i++)
-                {
-                    PointF point = new PointF(i * 50, 0); // Увеличьте множитель для большего расстояния
-                    graphics.TranslateTransform(10, 10);
-                    graphics.RotateTransform(random.Next(-10, 10));
-                    graphics.DrawString(captchaText[i].ToString(), font, Brushes.Black, point);
-                    graphics.ResetTransform();
-                }
-
-                // Рисование линий
-                for (int i = 0; i < 10; i++)
-                {
-                    Pen pen = new Pen(Color.Red, random.Next(2, 5));
-                    int x1 = random.Next(pictureBox3.Width);
-                    int y1 = random.Next(pictureBox3.Height);
-                    int x2 = random.Next(pictureBox3.Width);
-                    int y2 = random.Next(pictureBox3.Height);
-                    graphics.DrawLine(pen, x1, y1, x2, y2);
-                }
-
-                pictureBox3.Image = bmp;
-            }
-        }
     }
+}
